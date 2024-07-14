@@ -13,7 +13,7 @@ import SocialShareSide from "./elements/SocialShareSide";
 const PostFormatStandard = ({postData, allData}) => {
   const basePathLink = process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_BASEPATH ?? "" : "";
   
-  const postContent = postData.content.replaceAll('/images/', basePathLink + '/images/');
+  const postContent = postData.content.replace('/images/', basePathLink + '/images/');
 
     return (
       <>
