@@ -1,0 +1,38 @@
+name: Deploy Next.js to cPanel
+
+on:
+  push:
+    branches:
+      - master  # Trigger the workflow on push to the main branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Next.js application
+        run: npm run build
+
+      - name: Export static site
+        run: npm run export
+
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to cPanel
+        run: |
+          rsync -avz -e 'ssh -o StrictHostKeyChecking=no' out/ mobilesp@mobilespac.com:/home4/mobilesp/public_html
+
