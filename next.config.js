@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
   reactStrictMode: false,
   swcMinify: true,
   basePath: process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_BASEPATH : "",
@@ -8,9 +9,8 @@ const nextConfig = {
     return config;
   },
   images: {
-    loader: 'imgix',
-    path: '/',
-  },
+    unoptimized: true
+  }
 }
 
 module.exports = nextConfig
