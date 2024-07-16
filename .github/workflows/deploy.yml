@@ -23,13 +23,8 @@ jobs:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: Add SSH known hosts
-      run: ssh-keyscan example.com >> ~/.ssh/known_hosts
+      run: ssh-keyscan mobilespac.com >> ~/.ssh/known_hosts
 
     - name: Test SSH connection
       run: |
-        ssh -v user@example.com 'echo "SSH connection successful"'
-
-    - name: Deploy
-      run: |
-        # Your deployment script here
-        ssh user@example.com 'your-deployment-command'
+        ssh -v mobilesp@mobilespac.com 'echo "SSH connection successful"'
