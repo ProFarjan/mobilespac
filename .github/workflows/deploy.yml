@@ -24,19 +24,6 @@ jobs:
       run: |
         ping -c 4 mobilespac.com
         nslookup mobilespac.com
-
-    - name: Add SSH known hosts
-      run: |
-        ssh-keyscan mobilespac.com >> ~/.ssh/known_hosts
-      continue-on-error: true
-
-    - name: Test SSH connection
-      if: success()
-      run: ssh -vT mobilesp@mobilespac.com 'echo "SSH connection successful"'
-
-    - name: Deploy
-      if: success()
-      run: |
-        # Your deployment script here
-        ssh mobilesp@mobilespac.com 'your-deployment-command'
-
+        traceroute mobilespac.com
+        curl -v https://mobilespac.com
+        ifconfig
