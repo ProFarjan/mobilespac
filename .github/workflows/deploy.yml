@@ -1,38 +1,35 @@
-name: Deploy Next.js to cPanel
+name: Deploy
 
 on:
   push:
     branches:
-      - master  # Trigger the workflow on push to the main branch
+      - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18'
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ls -l ~/.ssh
+        cat ~/.ssh/id_rsa
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Install dependencies
-        run: npm install
+    - name: Add SSH known hosts
+      run: ssh-keyscan example.com >> ~/.ssh/known_hosts
 
-      - name: Build Next.js application
-        run: npm run build
+    - name: Test SSH connection
+      run: |
+        ssh -v user@example.com 'echo "SSH connection successful"'
 
-      - name: Set up SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          eval $(ssh-agent -s)
-          echo "${{ secrets.SSH_PASSPHRASE }}" | ssh-add ~/.ssh/id_rsa
-          ssh-keyscan -H mobilespac.com >> ~/.ssh/known_hosts
-
-      - name: Deploy to cPanel
-        run: |
-          rsync -avz -e 'ssh -o StrictHostKeyChecking=no' out/ mobilesp@mobilespac.com:/home4/mobilesp/public_html
+    - name: Deploy
+      run: |
+        # Your deployment script here
+        ssh user@example.com 'your-deployment-command'
