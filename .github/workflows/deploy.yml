@@ -17,14 +17,26 @@ jobs:
         mkdir -p ~/.ssh
         echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        ls -l ~/.ssh
-        cat ~/.ssh/id_rsa
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
+    - name: Debug Network
+      run: |
+        ping -c 4 mobilespac.com
+        nslookup mobilespac.com
+
     - name: Add SSH known hosts
-      run: ssh-keyscan mobilespac.com >> ~/.ssh/known_hosts
+      run: |
+        ssh-keyscan mobilespac.com >> ~/.ssh/known_hosts
+      continue-on-error: true
 
     - name: Test SSH connection
+      if: success()
+      run: ssh -vT mobilesp@mobilespac.com 'echo "SSH connection successful"'
+
+    - name: Deploy
+      if: success()
       run: |
-        ssh -v mobilesp@mobilespac.com 'echo "SSH connection successful"'
+        # Your deployment script here
+        ssh mobilesp@mobilespac.com 'your-deployment-command'
+
